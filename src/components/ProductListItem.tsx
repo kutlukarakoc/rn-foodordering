@@ -15,6 +15,7 @@ export const ProductListItem = ({ product }: ProductListItemProps) => {
       <Image
         source={{ uri: product.image || defaultPizzaOmage }}
         style={styles.image}
+				resizeMode='contain'
       />
       <Text style={styles.title}>{product.name}</Text>
       <Text style={styles.price}>${product.price}</Text>

@@ -8,7 +8,7 @@ type ProductListItemProps = {
   product: Product;
 };
 
-export const defaultPizzaOmage =
+export const defaultPizzaImage =
   'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png';
 
 export const ProductListItem = ({ product }: ProductListItemProps) => {
@@ -19,7 +19,7 @@ export const ProductListItem = ({ product }: ProductListItemProps) => {
     >
       <Pressable style={styles.container}>
         <Image
-          source={{ uri: product.image || defaultPizzaOmage }}
+          source={{ uri: product.image || defaultPizzaImage }}
           style={styles.image}
           resizeMode="contain"
         />

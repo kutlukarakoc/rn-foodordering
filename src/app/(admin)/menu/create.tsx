@@ -1,18 +1,21 @@
-import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Alert } from 'react-native';
 import React, { useState } from 'react';
 import Button from '@/components/Button';
 import { defaultPizzaImage } from '@/components/ProductListItem';
 import Colors from '@/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 export default function create() {
-	const [image, setImage] = useState<string | null>(null);
+  const { id } = useLocalSearchParams();
+  const isUpdating = !!id;
+
+  const [image, setImage] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [errors, setErrors] = useState('');
 
-	const pickImage = async () => {
+  const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -24,7 +27,6 @@ export default function create() {
       setImage(result.assets[0].uri);
     }
   };
-
 
   const validateInput = () => {
     setErrors('');
@@ -47,6 +49,8 @@ export default function create() {
     return true;
   };
 
+  const onSubmit = () => (isUpdating ? onUpdate() : onCreate());
+
   const onCreate = () => {
     if (!validateInput()) {
       return;
@@ -57,19 +61,53 @@ export default function create() {
     resetFields();
   };
 
+  const onUpdate = () => {
+    if (!validateInput()) {
+      return;
+    }
+
+    // TODO: update in the database
+
+    resetFields();
+  };
+
   const resetFields = () => {
     setName('');
     setPrice('');
   };
 
+  const onDelete = () => {
+    console.warn('delete');
+  };
+
+  const confirmDelete = () => {
+    Alert.alert('Confirm', 'Are you sure you want to delete this product', [
+			{
+				text: 'Cancel'
+			},
+			{
+				text: 'Delete',
+				style: 'destructive',
+				onPress: onDelete
+			}
+		]);
+  };
+
   return (
     <View style={styles.container}>
-			<Stack.Screen options={{ title: 'Create Pizza' }} />
+      <Stack.Screen
+        options={{ title: isUpdating ? 'Update Pizza' : 'Create Pizza' }}
+      />
       <Image
         source={{ uri: image || defaultPizzaImage }}
         style={styles.image}
       />
-			<Text style={styles.textButton} onPress={pickImage}>Select Image</Text>
+      <Text
+        style={styles.textButton}
+        onPress={pickImage}
+      >
+        Select Image
+      </Text>
 
       <Text style={styles.label}>Name</Text>
       <TextInput
@@ -91,9 +129,18 @@ export default function create() {
       <Text style={{ color: 'red', marginBottom: 10 }}>{errors}</Text>
 
       <Button
-        text="Create"
-        onPress={onCreate}
+        text={isUpdating ? 'Update' : 'Create'}
+        onPress={onSubmit}
       />
+
+      {isUpdating && (
+        <Text
+          style={styles.textButton}
+          onPress={confirmDelete}
+        >
+          Delete
+        </Text>
+      )}
     </View>
   );
 }
@@ -107,14 +154,14 @@ const styles = StyleSheet.create({
   image: {
     width: '50%',
     aspectRatio: 1,
-		alignSelf: 'center'
+    alignSelf: 'center',
   },
-	textButton: {
-		alignSelf: 'center',
-		fontWeight: 'bold',
-		color: Colors.light.tint,
-		marginVertical: 10
-	},
+  textButton: {
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    color: Colors.light.tint,
+    marginVertical: 10,
+  },
   label: {
     color: 'gray',
     fontSize: 16,

@@ -4,11 +4,16 @@ import Button from '@/components/Button';
 import { defaultPizzaImage } from '@/components/ProductListItem';
 import Colors from '@/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useInsertProduct } from '@/api/products';
 
 export default function create() {
+  const router = useRouter();
   const { id } = useLocalSearchParams();
+	
   const isUpdating = !!id;
+
+  const { mutate: insertProduct } = useInsertProduct();
 
   const [image, setImage] = useState<string | null>(null);
   const [name, setName] = useState('');
@@ -57,8 +62,15 @@ export default function create() {
     }
 
     // TODO: save in the database
-
-    resetFields();
+    insertProduct(
+      { name, price: parseFloat(price), image },
+      {
+        onSuccess: () => {
+          resetFields();
+					router.back();
+        },
+      },
+    );
   };
 
   const onUpdate = () => {
@@ -82,15 +94,15 @@ export default function create() {
 
   const confirmDelete = () => {
     Alert.alert('Confirm', 'Are you sure you want to delete this product', [
-			{
-				text: 'Cancel'
-			},
-			{
-				text: 'Delete',
-				style: 'destructive',
-				onPress: onDelete
-			}
-		]);
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: onDelete,
+      },
+    ]);
   };
 
   return (

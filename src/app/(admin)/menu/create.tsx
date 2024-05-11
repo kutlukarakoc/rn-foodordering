@@ -23,9 +23,9 @@ export default function create() {
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: deleteProduct } = useDeleteProduct();
 
-  const [image, setImage] = useState<string | null>(updatingProduct?.image);
-  const [name, setName] = useState<string>(updatingProduct.name);
-  const [price, setPrice] = useState<string>(String(updatingProduct.price));
+  const [image, setImage] = useState<string | null>(updatingProduct?.image || '');
+  const [name, setName] = useState<string>(updatingProduct?.name || '');
+  const [price, setPrice] = useState<string>(String(updatingProduct?.price || ''));
   const [errors, setErrors] = useState('');
 
   const pickImage = async () => {

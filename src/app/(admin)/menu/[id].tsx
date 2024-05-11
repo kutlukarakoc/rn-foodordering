@@ -50,15 +50,15 @@ const ProductDetailScreen = () => {
         }}
       />
 
-      <Stack.Screen options={{ title: product.name }} />
+      <Stack.Screen options={{ title: product?.name }} />
 
       <Image
         style={styles.image}
-        source={{ uri: product.image || defaultPizzaImage }}
+        source={{ uri: product?.image || defaultPizzaImage }}
       />
 
-      <Text style={styles.title}>{product.name}</Text>
-      <Text style={styles.price}>${product.price}</Text>
+      <Text style={styles.title}>{product?.name}</Text>
+      <Text style={styles.price}>${product?.price}</Text>
     </View>
   );
 };

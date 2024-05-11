@@ -5,15 +5,16 @@ import { defaultPizzaImage } from '@/components/ProductListItem';
 import Colors from '@/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useInsertProduct } from '@/api/products';
+import { useInsertProduct, useUpdateProduct } from '@/api/products';
 
 export default function create() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-	
+
   const isUpdating = !!id;
 
   const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
 
   const [image, setImage] = useState<string | null>(null);
   const [name, setName] = useState('');
@@ -61,13 +62,12 @@ export default function create() {
       return;
     }
 
-    // TODO: save in the database
     insertProduct(
       { name, price: parseFloat(price), image },
       {
         onSuccess: () => {
           resetFields();
-					router.back();
+          router.back();
         },
       },
     );
@@ -78,9 +78,15 @@ export default function create() {
       return;
     }
 
-    // TODO: update in the database
-
-    resetFields();
+    updateProduct(
+      { id: +id, name, price: parseFloat(price), image },
+      {
+        onSuccess: () => {
+          resetFields();
+          router.back();
+        },
+      },
+    );
   };
 
   const resetFields = () => {

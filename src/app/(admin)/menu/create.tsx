@@ -5,7 +5,7 @@ import { defaultPizzaImage } from '@/components/ProductListItem';
 import Colors from '@/constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useInsertProduct, useUpdateProduct } from '@/api/products';
+import { useInsertProduct, useProduct, useUpdateProduct } from '@/api/products';
 
 export default function create() {
   const router = useRouter();
@@ -13,12 +13,13 @@ export default function create() {
 
   const isUpdating = !!id;
 
+  const { data: updatingProduct } = useProduct(+id);
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
 
-  const [image, setImage] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+  const [image, setImage] = useState<string | null>(updatingProduct?.image);
+  const [name, setName] = useState<string>(updatingProduct.name);
+  const [price, setPrice] = useState<string>(String(updatingProduct.price));
   const [errors, setErrors] = useState('');
 
   const pickImage = async () => {

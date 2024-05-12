@@ -7,10 +7,11 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { Tables } from '@/database.types';
 
 type AuthData = {
   session: Session | null;
-  profile: any;
+  profile: Tables<'profiles'> | null;
   sessionFetching: boolean;
   isAdmin: boolean;
 };
@@ -24,7 +25,7 @@ const AuthContext = createContext<AuthData>({
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<Tables<'profiles'> | null>(null);
   const [sessionFetching, setSessionFetching] = useState(true);
 
   useEffect(() => {

@@ -1,9 +1,14 @@
 import OrderItemListItem from '@/components/OrderItemListItem';
 import OrderListItem from '@/components/OrderListItem';
-import orders from 'assets/data/orders';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { FlatList, Pressable, Text, View, StyleSheet, ActivityIndicator } from 'react-native';
-import { useState } from 'react';
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import Colors from '@/constants/Colors';
 import { OrderStatusList, OrderStatus } from '@/types';
 import { useOrderDetails } from '@/api/orders';
@@ -11,15 +16,13 @@ import { useOrderDetails } from '@/api/orders';
 export default function OrderDetailsScreen() {
   const { id } = useLocalSearchParams();
 
-	const { data: order, isLoading, error } = useOrderDetails(+id)
+  const { data: order, isLoading, error } = useOrderDetails(+id);
 
-	if (isLoading) return <ActivityIndicator />;
+  if (isLoading) return <ActivityIndicator />;
 
-	if (error) return <Text>Failed to fetch order</Text>
+  if (error) return <Text>Failed to fetch order</Text>;
 
-	if (!order) return <Text>Order not found</Text>
-
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status);
+  if (!order) return <Text>Order not found</Text>;
 
   return (
     <View style={{ padding: 10, gap: 20, flex: 1 }}>
@@ -41,15 +44,15 @@ export default function OrderDetailsScreen() {
                     styles.status,
                     {
                       backgroundColor:
-                        orderStatus === status ? Colors.light.tint : 'white',
+                        order.status === status ? Colors.light.tint : 'white',
                     },
                   ]}
-                  onPress={() => setOrderStatus(status)}
+                  onPress={() => console.warn('update status')}
                 >
                   <Text
                     style={{
                       color:
-                        orderStatus === status ? 'white' : Colors.light.tint,
+                        order.status === status ? 'white' : Colors.light.tint,
                     }}
                   >
                     {status}

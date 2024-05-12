@@ -12,7 +12,8 @@ export const useAdminOrdersList = ({ archived = false }) => {
       const { data, error } = await supabase
         .from('orders')
         .select('*')
-        .in('status', statuses);
+        .in('status', statuses)
+        .order('created_at', { ascending: false });
 
       if (error) {
         throw new Error(error.message);
@@ -27,14 +28,15 @@ export const useUserOrdersList = () => {
   const id = session?.user.id;
 
   return useQuery({
-    queryKey: ['orders', { useId: id }],
+    queryKey: ['orders', { userId: id }],
     queryFn: async () => {
       if (!id) return null;
 
       const { data, error } = await supabase
         .from('orders')
         .select('*')
-        .eq('user_id', id);
+        .eq('user_id', id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         throw new Error(error.message);
@@ -66,7 +68,7 @@ export const useInsertOrder = () => {
   const queryClient = useQueryClient();
 
   const { session } = useAuth();
-  const userId = session?.user?.id;
+  const userId = session?.user.id;
 
   return useMutation({
     async mutationFn(data: InsertTables<'orders'>) {

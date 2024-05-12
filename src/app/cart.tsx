@@ -7,7 +7,7 @@ import CartListItem from '@/components/CartListItem';
 import Button from '@/components/Button';
 
 export default function Cart() {
-  const { items, total } = useCart();
+  const { items, total, checkout } = useCart();
 
   return (
     <View style={styles.container}>
@@ -19,7 +19,7 @@ export default function Cart() {
             contentContainerStyle={styles.productList}
           />
           <Text style={styles.total}>${total}</Text>
-          <Button text="Checkout" />
+          <Button text="Checkout" onPress={checkout} />
         </>
       ) : (
         <View

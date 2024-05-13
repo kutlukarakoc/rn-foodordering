@@ -2,7 +2,6 @@ import { Link, Stack, useLocalSearchParams } from 'expo-router';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   Pressable,
   ActivityIndicator,
@@ -11,6 +10,7 @@ import { defaultPizzaImage } from '@/components/ProductListItem';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useProduct } from '@/api/products';
+import RemoteImage from '@/components/RemoteImage';
 
 const ProductDetailScreen = () => {
   const { id } = useLocalSearchParams();
@@ -52,9 +52,10 @@ const ProductDetailScreen = () => {
 
       <Stack.Screen options={{ title: product?.name }} />
 
-      <Image
+      <RemoteImage
         style={styles.image}
-        source={{ uri: product?.image || defaultPizzaImage }}
+        path={product?.image}
+        fallback={defaultPizzaImage}
       />
 
       <Text style={styles.title}>{product?.name}</Text>

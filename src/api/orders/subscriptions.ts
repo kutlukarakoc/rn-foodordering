@@ -22,3 +22,29 @@ export const useInsertOrderSubscription = () => {
     };
   }, []);
 };
+
+export const useUpdateOrderSubscription = (id: number) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const orderSubscription = supabase
+      .channel('custom-filter-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `id=eq.${id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['orders', id] });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      orderSubscription.unsubscribe();
+    };
+  });
+};

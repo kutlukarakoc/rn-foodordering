@@ -12,11 +12,17 @@ import {
 import Colors from '@/constants/Colors';
 import { OrderStatusList, OrderStatus } from '@/types';
 import { useOrderDetails } from '@/api/orders';
+import { useUpdateOrder } from '@/api/order-items';
 
 export default function OrderDetailsScreen() {
   const { id } = useLocalSearchParams();
 
   const { data: order, isLoading, error } = useOrderDetails(+id);
+  const { mutate: updateOrder, isPending } = useUpdateOrder();
+
+  const updateStatus = (status: OrderStatus) => {
+    updateOrder({ id: +id, updatedFields: { status } });
+  };
 
   if (isLoading) return <ActivityIndicator />;
 
@@ -40,14 +46,16 @@ export default function OrderDetailsScreen() {
               {OrderStatusList.map((status: OrderStatus) => (
                 <Pressable
                   key={status}
+                  disabled={isPending}
                   style={[
                     styles.status,
                     {
                       backgroundColor:
                         order.status === status ? Colors.light.tint : 'white',
+                      opacity: isPending ? 0.5 : 1,
                     },
                   ]}
-                  onPress={() => console.warn('update status')}
+                  onPress={() => updateStatus(status)}
                 >
                   <Text
                     style={{

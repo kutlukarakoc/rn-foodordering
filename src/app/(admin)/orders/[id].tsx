@@ -13,6 +13,7 @@ import Colors from '@/constants/Colors';
 import { OrderStatusList, OrderStatus } from '@/types';
 import { useOrderDetails } from '@/api/orders';
 import { useUpdateOrder } from '@/api/order-items';
+import { notifyUserAboutOrderUpdate } from '@/lib/notifications';
 
 export default function OrderDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -20,8 +21,12 @@ export default function OrderDetailsScreen() {
   const { data: order, isLoading, error } = useOrderDetails(+id);
   const { mutate: updateOrder, isPending } = useUpdateOrder();
 
-  const updateStatus = (status: OrderStatus) => {
+  const updateStatus = async (status: OrderStatus) => {
     updateOrder({ id: +id, updatedFields: { status } });
+
+    if (order) {
+      await notifyUserAboutOrderUpdate({ ...order, status });
+    }
   };
 
   if (isLoading) return <ActivityIndicator />;

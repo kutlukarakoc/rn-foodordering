@@ -4,6 +4,7 @@ import { Redirect, Tabs } from 'expo-router';
 
 import Colors from '@/constants/Colors';
 import { useAuth } from '@/providers/AuthProvider';
+import { useColorScheme } from 'react-native';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -19,6 +20,8 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   const { isAdmin } = useAuth();
 
   if (!isAdmin) {
@@ -28,11 +31,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.background,
-				tabBarInactiveTintColor: 'gainsboro',
-        tabBarStyle: {
-          backgroundColor: Colors.light.tint,
-        },
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
       }}
     >
       <Tabs.Screen
@@ -56,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="orders"
         options={{
-					headerShown: false,
+          headerShown: false,
           title: 'Orders',
           tabBarIcon: ({ color }) => (
             <TabBarIcon
